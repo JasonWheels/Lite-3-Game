@@ -14,41 +14,47 @@ class App extends Component {
     const gameGrid = []
     for (let i = 0; i < 9; i++) {
       let classChooser = 'available'
-      if (this.state.green.includes(i.toString())){
+      if (this.state.green.includes(i)){
         console.log("green class", i)
         classChooser = 'green'
       }
-      if (this.state.red.includes(i.toString())) {
+      if (this.state.red.includes(i)) {
         console.log("red class", i)
         classChooser = 'red'
       }
-      gameGrid.push(<div id={i} className={classChooser} onClick={(event) => {this._handleClick(event)}}><p>{i}</p></div>)
+      gameGrid.push(<div id={i} className={classChooser} onClick={(event) => {this._handleClick(event, this.state.greenTurn, this.state.green, this.state.red)}}><p>{i}</p></div>)
     }
     return gameGrid
   }
 
-  _handleClick(event) {
-    if (this.state.red.includes(event.target.id.toString()) || this.state.green.includes(event.target.id.toString())){
+  check_win(moveSet) {
+    const winningCombinations = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [ 2, 5, 8], [0, 4, 8], [2, 4, 6]]
+    for (let i = 0; i < winningCombinations.length; i++){
+      console.log(JSON.stringify(moveSet.sort()), ' moveset')
+      console.log(JSON.stringify(winningCombinations[i]), ' winning combos')
+      if (JSON.stringify(moveSet.sort()) === JSON.stringify(winningCombinations[i])) {
+        console.log('There is a winner!')
+      }
+    }
+  }
+
+  _handleClick(event, isGreenTurn, greenMoveSet, redMoveSet) {
+    console.log('TARGET: ', event.target.id)
+    if (this.state.red.includes(event.target.id) || this.state.green.includes(event.target.id)){
       console.log('clicked on a spot that is already taken')
       return 'invalid click'
     }
     let clickID = event.target.id
-    // let newColor = this.state.greenTurn ? this.state.green : this.state.red
-    if (this.state.greenTurn && !this.state.red.includes(event.target.id.toString()) && !this.state.green.includes(event.target.id.toString())){
-      let newGreen = this.state.green.slice(0,2)
-      newGreen.unshift(clickID)
+    if (isGreenTurn){
+      let newGreen = greenMoveSet.slice(0,2)
+      newGreen.unshift(parseInt(clickID))
       this.setState({
         green: newGreen
-      },
-      () => {
-        for (let i = 0; i < this.state.green.length; i++){
-          console.log(this.state.green[i])
-        }
-      })
+      }, this.check_win(greenMoveSet))
     }
     else {
       let newRed = this.state.red.slice(0,2)
-      newRed.unshift(clickID)
+      newRed.unshift(parseInt(clickID))
       this.setState({
         red: newRed
       })
@@ -57,10 +63,8 @@ class App extends Component {
       greenTurn: !this.state.greenTurn
     })
     
-    console.log(this.state.green)
-    console.log(this.state.red)
-    console.log(`Green Move List: ${this.state.green}`)
-    console.log(`Red Move List: ${this.state.red}`)
+    // console.log(`Green Move List: ${this.state.green}`)
+    // console.log(`Red Move List: ${this.state.red}`)
   }
 
   render() {
@@ -78,3 +82,5 @@ class App extends Component {
 }
 
 export default App;
+
+// JSON.stringify(a1) === JSON.stringify(a2)
