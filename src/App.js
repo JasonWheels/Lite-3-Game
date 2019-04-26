@@ -99,6 +99,7 @@ class App extends Component {
         <header className="App-header">
           <h3>Lite-3 Game</h3>
           {this.state.winner ? <h2>{this.state.winner} is the winner!!!</h2> : <p>A strategic version of Tic-Tac-Toe where only the last 3 moves count.<br/>Try to trap your opponent!</p>}
+          {this.state.greenTurn ? <p style={{color: 'green'}}>Green's Move</p> : <p style={{color: 'red'}}>Red's Move</p>}
           <div className="game-grid">
             {this.createGrid()}
           </div>
@@ -108,7 +109,7 @@ class App extends Component {
         </header>
         <p>Color Fade can be toggled to help show which moves are oldest.</p>
       </div>
-    );
+    )
   }
 }
 
