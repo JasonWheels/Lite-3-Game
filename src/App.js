@@ -8,6 +8,7 @@ class App extends Component {
     redMoveList: [],
     greenTurn: true,
     cssClasses: ['green', 'red', 'available'],
+    opacityClasses: ['newest', 'middle', 'oldest'],
     winner: null
   }
 
@@ -15,13 +16,17 @@ class App extends Component {
     const gameGrid = []
     for (let i = 0; i < 9; i++) {
       let classChooser = 'available'
+      let opacity = 'newest'
       if (this.state.greenMoveList.includes(i)){
         classChooser = 'green'
+        opacity = this.state.opacityClasses[this.state.greenMoveList.indexOf(i)]
+        console.log(opacity)
       }
       if (this.state.redMoveList.includes(i)) {
         classChooser = 'red'
+        opacity = this.state.opacityClasses[this.state.redMoveList.indexOf(i)]
       }
-      gameGrid.push(<div id={i} className={classChooser} onClick={(event) => {this._handleClick(event, this.state.greenTurn, this.state.greenMoveList, this.state.redMoveList)}}></div>)
+      gameGrid.push(<div id={i} className={classChooser + ' ' + opacity} onClick={(event) => {this._handleClick(event, this.state.greenTurn, this.state.greenMoveList, this.state.redMoveList)}}></div>)
     }
     return gameGrid
   }
@@ -70,7 +75,7 @@ class App extends Component {
     })
   }
 
-  _handleReset(){
+  handleReset(){
     this.setState({
       greenMoveList: [],
       redMoveList: [],
@@ -79,19 +84,29 @@ class App extends Component {
     })
   }
 
+  toggleColorFade() {
+    if (this.state.opacityClasses.includes('oldest')) {
+      this.setState({opacityClasses: ['newest', 'newest', 'newest']})
+    } else {
+      this.setState({opacityClasses: ['newest', 'middle', 'oldest']})
+    }
+  }
+
   render() {
 
     return (
       <div className="App">
         <header className="App-header">
-          <h2>Lite-3 Game</h2>
-          {this.state.winner ? <h2>{this.state.winner} is the winner!!!</h2> : <h4>A strategic version of Tic-Tac-Toe where only the last 3 moves count.<br/>Try to trap your opponent!</h4>}
+          <h3>Lite-3 Game</h3>
+          {this.state.winner ? <h2>{this.state.winner} is the winner!!!</h2> : <p>A strategic version of Tic-Tac-Toe where only the last 3 moves count.<br/>Try to trap your opponent!</p>}
           <div className="game-grid">
             {this.createGrid()}
           </div>
-            <button onClick={() => this._handleReset()}>Reset</button>
+            <button onClick={() => this.handleReset()}>Reset</button>
+            <button onClick={() => this.toggleColorFade()}>Toggle Color Fade</button>
           
         </header>
+        <p>Color Fade can be toggled to help show which moves are oldest.</p>
       </div>
     );
   }
