@@ -43,3 +43,9 @@ code {
   background-color: red;
   border-radius: 50%;
 }
+
+button {
+  margin: 20px;
+  width: 80px;
+
+}

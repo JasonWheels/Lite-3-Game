@@ -7,7 +7,8 @@ class App extends Component {
     green: [],
     red: [],
     greenTurn: true,
-    cssClasses: ['green', 'red', 'available']
+    cssClasses: ['green', 'red', 'available'],
+    winner: false
   }
 
   createGrid() {
@@ -15,11 +16,9 @@ class App extends Component {
     for (let i = 0; i < 9; i++) {
       let classChooser = 'available'
       if (this.state.green.includes(i)){
-        // console.log("green class", i)
         classChooser = 'green'
       }
       if (this.state.red.includes(i)) {
-        // console.log("red class", i)
         classChooser = 'red'
       }
       gameGrid.push(<div id={i} className={classChooser} onClick={(event) => {this._handleClick(event, this.state.greenTurn, this.state.green, this.state.red)}}><p>{i}</p></div>)
@@ -33,16 +32,10 @@ class App extends Component {
     for (let i = 0; i < winningCombinations.length; i++){
       if (JSON.stringify(moveSetCopy.sort()) === JSON.stringify(winningCombinations[i])) {
         console.log('There is a winner!')
+        this.setState({winner: true})
       }
     }
   }
-
-  // updateMoveList(newMoveList) {
-  //   this.setState({
-  //     green: newMoveList
-  //   }, this.checkWin(newMoveList)
-  //   )
-  // }
 
   _handleClick(event, isGreenTurn, greenMoveSet, redMoveSet) {
     console.log('TARGET: ', event.currentTarget.id)
@@ -58,78 +51,48 @@ class App extends Component {
         let newGreen = this.state.green.slice(0,2)
         console.log('newGreen: ', newGreen)
         newGreen.unshift(clickID)
+        this.checkWin(newGreen)
         console.log('newGreen after unshift: ', newGreen)
         this.setState({
           green: newGreen,
-          // greenTurn: !this.state.greenTurn
-          }, console.log(`Green Move List: ${this.state.green}`)
+          }
         )
       }
       else {
         let newRed = this.state.red.slice(0,2)
         newRed.unshift(clickID)
+        this.checkWin(newRed)
         this.setState({
           red: newRed,
-          // greenTurn: !this.state.greenTurn
-        }, console.log(`Red Move List: ${this.state.red}`)
+        }
         )
       }
-      // this.setState({
-      //   greenTurn: !this.state.greenTurn
-      // })
-      
-      // console.log(`Green Move List: ${this.state.green}`)
-      // console.log(`Red Move List: ${this.state.red}`)
     }
-    // console.log('TARGET: ', event.target.id)
-    // if (this.state.red.includes(event.target.id) || this.state.green.includes(event.target.id)){
-    //   console.log('clicked on a spot that is already taken')
-    //   return 'invalid click'
-    // }
-    // let clickID = event.target.id
-    // if (isGreenTurn){
-    //   let newGreen = greenMoveSet.slice(0,2)
-    //   newGreen.unshift(parseInt(clickID))
-    //   this.setState({
-    //     green: newGreen
-    //     }
-    //   )
-    // }
-    // else {
-    //   let newRed = redMoveSet.slice(0,2)
-    //   newRed.unshift(parseInt(clickID))
-    //   this.setState({
-    //     red: newRed
-    //   })
-    // }
     this.setState({
       greenTurn: !this.state.greenTurn
     })
-    
-    // console.log(`Green Move List: ${this.state.green}`)
-    // console.log(`Red Move List: ${this.state.red}`)
   }
 
-  componentDidUpdate() {
-    this.checkWin(this.state.green)
-    this.checkWin(this.state.red)
+  _handleReset(){
+    this.setState({
+      green: [],
+      red: [],
+      greenTurn: true,
+      winner: false
+    })
   }
 
   render() {
-    console.log('INSIDE RENDER')
-    // let moveList
-    // if (this.state.greenTurn) {
-    //   this.checkWin(this.state.green)
-    // } else {
-    //   this.checkWin(this.state.red)
-    // }
-    // this.checkWin(this.state.green)
+
     return (
       <div className="App">
         <header className="App-header">
+          <h2>Lite-3 Game</h2>
+          {this.state.winner ? <h2>There is a winner!!!</h2> : <h4>This game is a strategic version of Tic-Tac-Toe where only the last 3 moves count.<br/>Try to trap your opponent!</h4>}
           <div className="game-grid">
             {this.createGrid()}
           </div>
+            <button onClick={() => this._handleReset()}>Reset</button>
           
         </header>
       </div>
@@ -139,4 +102,3 @@ class App extends Component {
 
 export default App;
 
-// JSON.stringify(a1) === JSON.stringify(a2)
